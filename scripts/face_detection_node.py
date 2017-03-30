@@ -6,11 +6,13 @@ from std_msgs.msg import String
 from std_msgs.msg import Bool
 import cv2
 import sys
+import os
 
 from time import sleep
 
+owd = os.path.dirname(os.path.abspath(__file__))
 #--------------------------PARAMETERS TO UPDATE--------------------------#
-cascPath 		= '/home/aaron/nova_ws/src/face_detection/scripts/haarcascade_frontalface_default.xml' 	#we can change this
+cascPath 		= owd + '/haarcascade_frontalface_default.xml' 	#we can change this
 
 camera_path 		= 0 		#laptop, webcam = 0, USB cam = 1
 #------------------------------------------------------------------------#
@@ -24,6 +26,7 @@ face_detect_pub  	= rospy.Publisher('face_detect', Bool, queue_size = 10)
 face_location_pub	= rospy.Publisher('face_location', String, queue_size = 10)
 
 def camera_handler():
+	rospy.loginfo(cascPath)
 	while not rospy.is_shutdown():
 		if not cam.isOpened():
 			rospy.loginfo('Unable to load camera.')
@@ -64,6 +67,7 @@ def camera_handler():
 		#publishing
 		face_detect_pub.publish(face_detected_flag) #0 means no face, 1 means yes
 		face_location_string 	= "%d,%d,%d,%d" % (closest_face_x, closest_face_y, closest_face_w, closest_face_h)
+		rospy.loginfo(face_location_string)
 		face_location_pub.publish(face_location_string)
 		###################
 
